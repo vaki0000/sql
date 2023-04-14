@@ -1,5 +1,6 @@
 # sql
 ##dersleri
+
 sql ile ilgili konular sırasıyla işlendi.
 dersler örnekler üzerinden anlatıldı.
 sample retail database i kullanıldı.
