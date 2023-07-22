@@ -182,6 +182,8 @@ SELECT PATINDEX('%[RC]%', 'CHARACTER')
 
 SELECT PATINDEX('_H%' , 'CHARACTER')
 
+SELECT PATINDEX ('%schools%', 'W3Schools.com');
+
 
 --LEFT
 
@@ -377,7 +379,9 @@ WHERE PATINDEX('%yahoo%', email) > 0;
 ---Write a query that returns the name of the streets, where the third character of the streets is numeric.
 ---(street sütununda soldan üçüncü karakterin rakam olduğu kayıtları getiriniz)
 
-
+SELECT *
+FROM sale.customer
+WHERE ISNUMERIC(substring([street],3 ,1)) = 1
 
 
 
@@ -391,6 +395,9 @@ WHERE PATINDEX('%yahoo%', email) > 0;
 --beklenen sütunlar: customer_id, first_name, last_name, contact
 
 
+SELECT customer_id, first_name, last_name, isnull(phone,[email]) as contact
+FROM sale.customer
+ 
 
 
 
@@ -400,5 +407,7 @@ WHERE PATINDEX('%yahoo%', email) > 0;
 --@ işareti ile mail sütununu ikiye ayırın. Örneğin
 --ronna.butler@gmail.com	/ ronna.butler	/ gmail.com
 
-
+SELECT REPLACE([email], '@', '/') as sep_email
+FROM sale.customer
+ 
 

@@ -13,9 +13,10 @@
 
 -- ****Single-Row Subqueries**** --
 --**************************************
-
+SELECT*
+FROM sale.staff
 -- QUESTION: Write a query that shows all employees in the store where Davis Thomas works.
--- (Davis Thomas'ýn çalýþtýðý maðazadaki tüm personeli listeleyin)
+-- (Davis Thomas'ï¿½n ï¿½alï¿½ï¿½tï¿½ï¿½ï¿½ maï¿½azadaki tï¿½m personeli listeleyin)
 
 select * 
 from sale.staff
@@ -25,9 +26,12 @@ where store_id = (
 		where first_name='Davis' 
 			and last_name='Thomas')
 
-
+select staff_id
+from sale.staff
+where first_name='Charles' 
+and last_name='Cussona'
 -- QUESTION: Write a query that shows the employees for whom Charles Cussona is a first-degree manager.(To which employees are Charles Cussona a first-degree manager?)
--- (Charles Cussona'nýn birinci derece yönetici olduðu personeli listeleyin)
+-- (Charles Cussona'nï¿½n birinci derece yï¿½netici olduï¿½u personeli listeleyin)
 
 
 select *
@@ -37,11 +41,14 @@ where manager_id = (
 		from sale.staff
 		where first_name='Charles' 
 			and last_name='Cussona')
-
-
+select product_id, product_name, model_year, list_price
+from product.product
+where list_price>(select list_price
+           from product.product
+           where product_name = 'Pro-Series 49-Class Full HD Outdoor LED TV (Silver)')
 -- QUESTION: Write a query that returns the list of products that are more expensive than the product named 'Pro-Series 49-Class Full HD Outdoor LED TV (Silver)'.(Also show model year and list price)
--- 'Pro-Series 49-Class Full HD Outdoor LED TV (Silver)' isimli üründen pahalý olan ürünleri listeleyin.
--- Product id, product name, model_year, fiyat, marka adý ve kategori adý alanlarýna ihtiyaç duyulmaktadýr.
+-- 'Pro-Series 49-Class Full HD Outdoor LED TV (Silver)' isimli ï¿½rï¿½nden pahalï¿½ olan ï¿½rï¿½nleri listeleyin.
+-- Product id, product name, model_year, fiyat, marka adï¿½ ve kategori adï¿½ alanlarï¿½na ihtiyaï¿½ duyulmaktadï¿½r.
 
 select product_id, product_name, model_year, list_price
 from product.product
@@ -60,7 +67,7 @@ where list_price > (
 ---//////////////////////////---
 
 -- QUESTION: Write a query that returns the first name, last name, and order date of customers who ordered on the same dates as Laurel Goldammer.
--- (Laurel Goldammer isimli müþterinin alýþveriþ yaptýðý tarihlerde alýþveriþ yapan tüm müþterilerin ad, soyad ve sipariþ tarihi bilgileri listeleyin)
+-- (Laurel Goldammer isimli mï¿½ï¿½terinin alï¿½ï¿½veriï¿½ yaptï¿½ï¿½ï¿½ tarihlerde alï¿½ï¿½veriï¿½ yapan tï¿½m mï¿½ï¿½terilerin ad, soyad ve sipariï¿½ tarihi bilgileri listeleyin)
 
 select a.first_name, a.last_name, b.order_date
 from sale.customer a, sale.orders b
@@ -85,8 +92,9 @@ where b.order_date IN(
 		where c.first_name='Laurel' and c.last_name='Goldammer')
 
 
+
 -- QUESTION: List the products that ordered in the last 10 orders in Buffalo city.
--- (Buffalo þehrinde son 10 sipariþte sipariþ verilen ürünleri listeleyin)
+-- (Buffalo ï¿½ehrinde son 10 sipariï¿½te sipariï¿½ verilen ï¿½rï¿½nleri listeleyin)
 
 select distinct p.product_name
 from product.product p, sale.order_item oi
@@ -121,7 +129,7 @@ where list_price < (select avg(list_price) from product.product where category_i
 -- EXISTS / NOT EXISTS
 
 -- QUESTION: Write a query that returns a list of States where 'Apple - Pre-Owned iPad 3 - 32GB - White' product is not ordered
--- 'Apple - Pre-Owned iPad 3 - 32GB - White' isimli ürünün sipariþ verilmediði state'leri döndüren bir sorgu yazýnýz. (müþterilerin state'leri üzerinden)
+-- 'Apple - Pre-Owned iPad 3 - 32GB - White' isimli ï¿½rï¿½nï¿½n sipariï¿½ verilmediï¿½i state'leri dï¿½ndï¿½ren bir sorgu yazï¿½nï¿½z. (mï¿½ï¿½terilerin state'leri ï¿½zerinden)
 
 
 select distinct state
@@ -141,8 +149,16 @@ where NOT EXISTS (
 -- QUESTION: Write a query that returns stock information of the products in Davi techno Retail store. 
 -- The BFLO Store hasn't  got any stock of that products.
 
--- Davi techno maðazasýndaki ürünlerin stok bilgilerini döndüren bir sorgu yazýn. 
--- Bu ürünlerin The BFLO Store maðazasýnda stoðu bulunmuyor.
+-- Davi techno maï¿½azasï¿½ndaki ï¿½rï¿½nlerin stok bilgilerini dï¿½ndï¿½ren bir sorgu yazï¿½n. 
+-- Bu ï¿½rï¿½nlerin The BFLO Store maï¿½azasï¿½nda stoï¿½u bulunmuyor.
+
+
+
+SELECT *
+FROM product.product x
+WHERE NOT EXISTS (
+      SELECT 1
+	  FROM 
 
 
 
@@ -152,7 +168,7 @@ where NOT EXISTS (
 -- Subquery in SELECT Statement
 
 -- QUESTION: Write a query that creates a new column named "total_price" calculating the total prices of the products on each order.
--- order id'lere göre toplam list price larý hesaplayýn.
+-- order id'lere gï¿½re toplam list price larï¿½ hesaplayï¿½n.
 
 
 
@@ -170,8 +186,8 @@ where NOT EXISTS (
 ---//////////////////////////---
 
 -- QUESTION: List customers who have an order prior to the last order date of a customer named Jerald Berray and are residents of the city of Austin. 
--- (Jerald Berray isimli müþterinin son sipariþinden önce sipariþ vermiþ 
--- ve Austin þehrinde ikamet eden müþterileri listeleyin)
+-- (Jerald Berray isimli mï¿½ï¿½terinin son sipariï¿½inden ï¿½nce sipariï¿½ vermiï¿½ 
+-- ve Austin ï¿½ehrinde ikamet eden mï¿½ï¿½terileri listeleyin)
 
 
 WITH t1 as
@@ -191,8 +207,8 @@ where a.customer_id=b.customer_id
 
 
 -- QUESTION: List all customers their orders are on the same dates with Laurel Goldammer.
--- Laurel Goldammer isimli müþterinin alýþveriþ yaptýðý tarihte/tarihlerde alýþveriþ yapan tüm müþterileri listeleyin.
--- Müþteri adý, soyadý ve sipariþ tarihi bilgilerini listeleyin.
+-- Laurel Goldammer isimli mï¿½ï¿½terinin alï¿½ï¿½veriï¿½ yaptï¿½ï¿½ï¿½ tarihte/tarihlerde alï¿½ï¿½veriï¿½ yapan tï¿½m mï¿½ï¿½terileri listeleyin.
+-- Mï¿½ï¿½teri adï¿½, soyadï¿½ ve sipariï¿½ tarihi bilgilerini listeleyin.
 
 
 WITH cte as
@@ -210,7 +226,7 @@ where a.customer_id=b.customer_id
 
 
 -- QUESTION: List the stores whose turnovers are under the average store turnovers in 2018.
--- (2018 yýlýnda tüm maðazalarýn ortalama cirosunun altýnda ciroya sahip maðazalarý listeleyin)
+-- (2018 yï¿½lï¿½nda tï¿½m maï¿½azalarï¿½n ortalama cirosunun altï¿½nda ciroya sahip maï¿½azalarï¿½ listeleyin)
 
 WITH trn_1 as
 (
@@ -229,6 +245,6 @@ where trn_1.turnover < trn_2.avg_trn
 
 
 -- QUESTION: Write a query that returns the net amount of their first order for customers who placed their first order after 2019-10-01.
--- (Ýlk sipariþini 2019-10-01 tarihinden sonra veren müþterilerin ilk sipariþlerinin net tutarýný döndürünüz)
+-- (ï¿½lk sipariï¿½ini 2019-10-01 tarihinden sonra veren mï¿½ï¿½terilerin ilk sipariï¿½lerinin net tutarï¿½nï¿½ dï¿½ndï¿½rï¿½nï¿½z)
 
 
