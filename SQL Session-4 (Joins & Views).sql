@@ -5,8 +5,8 @@
 ------ INNER JOIN ------
 
 --Make a list of products showing the product ID, product name, category ID, and category name.
---(Ürünleri kategori isimleri ile birlikte listeleyin)
---(Ürün IDsi, ürün adý, kategori IDsi ve kategori adlarýný seçin)
+--(ï¿½rï¿½nleri kategori isimleri ile birlikte listeleyin)
+--(ï¿½rï¿½n IDsi, ï¿½rï¿½n adï¿½, kategori IDsi ve kategori adlarï¿½nï¿½ seï¿½in)
 
 select * from product.product
 select * from product.category
@@ -46,7 +46,7 @@ group by b.store_name;
 
 --Write a query that returns products that have never been ordered
 --Select product ID, product name, orderID
---(Hiç sipariþ verilmemiþ ürünleri listeleyin)
+--(Hiï¿½ sipariï¿½ verilmemiï¿½ ï¿½rï¿½nleri listeleyin)
 
 select * from product.product
 select * from sale.order_item
@@ -69,6 +69,14 @@ left join sale.order_item c on b.order_id=c.order_id
 group by a.staff_id
 order by a.staff_id;
 
+
+
+select b.staff_id, sum(c.quantity)
+from  sale.orders b 
+left join sale.order_item c on b.order_id=c.order_id
+group by b.staff_id
+order by b.staff_id;
+
 /*select a.staff_id,isnull(sum(c.quantity), 0)
 from sale.staff a
 inner join sale.orders b on a.staff_id=b.staff_id
@@ -82,7 +90,7 @@ order by a.staff_id;*/
 
 --Write a query that returns products that have never been ordered
 --Select product ID, product name, orderID
---(Hiç sipariþ verilmemiþ ürünleri listeleyin)
+--(Hiï¿½ sipariï¿½ verilmemiï¿½ ï¿½rï¿½nleri listeleyin)
 
 select p.product_id,p.product_name,o.order_id
 from sale.order_item o
@@ -99,12 +107,13 @@ right join sale.order_item o
 where o.order_id is null;
 
 
+
 --////////////////////////////////////////////--
 ------ FULL OUTER JOIN ------
 
 --Report the stock quantities of all products
---(Ürünlerin stok miktarýný raporlayýn)
---(Her ürünün stok ve sipariþ bilgisi olmak zorunda deðil)
+--(ï¿½rï¿½nlerin stok miktarï¿½nï¿½ raporlayï¿½n)
+--(Her ï¿½rï¿½nï¿½n stok ve sipariï¿½ bilgisi olmak zorunda deï¿½il)
 
 select * from product.stock order by store_id, product_id
 
@@ -118,12 +127,12 @@ group by p.product_id;
 ------ CROSS JOIN ------
 
 /*The stock table does not have all the products in the product table, and you want to add these products to the stock table.
-  You have to insert all these products for every three stores with “0 (zero)” quantity.
+  You have to insert all these products for every three stores with ï¿½0 (zero)ï¿½ quantity.
   Write a query to prepare this data.*/
 
---stock tablosunda olmayýp product tablosunda mevcut olan ürünlerin stock tablosuna tüm store'lar için kayýt edilmesi gerekiyor. 
---stoðu olmadýðý için quantity'leri 0 olmak zorunda
---Ve bir product_id tüm store'larýn stock'una eklenmesi gerektiði için cross join yapmamýz gerekiyor.
+--stock tablosunda olmayï¿½p product tablosunda mevcut olan ï¿½rï¿½nlerin stock tablosuna tï¿½m store'lar iï¿½in kayï¿½t edilmesi gerekiyor. 
+--stoï¿½u olmadï¿½ï¿½ï¿½ iï¿½in quantity'leri 0 olmak zorunda
+--Ve bir product_id tï¿½m store'larï¿½n stock'una eklenmesi gerektiï¿½i iï¿½in cross join yapmamï¿½z gerekiyor.
 
 select * from product.stock
 select * from sale.store
@@ -141,8 +150,8 @@ where p.product_id NOT IN(select product_id from product.stock)
 
 --Write a query that returns the staff names with their manager names.
 --Expected columns: staff first name, staff last name, manager name
---(Personelleri ve þeflerini listeleyin)
---(Çalýþan adý ve yönetici adý bilgilerini getirin)
+--(Personelleri ve ï¿½eflerini listeleyin)
+--(ï¿½alï¿½ï¿½an adï¿½ ve yï¿½netici adï¿½ bilgilerini getirin)
 
 select * from sale.staff
 
@@ -161,11 +170,14 @@ inner join sale.staff b on a.manager_id=b.staff_id
 
 
 --Write a query that returns both the names of staff and the names of their 1st and 2nd managers
---(Bir önceki sorgu sonucunda gelen þeflerin yanýna onlarýn da þeflerini getiriniz)
---(Çalýþan adý, þef adý, þefin þefinin adý bilgilerini getirin)
+--(Bir ï¿½nceki sorgu sonucunda gelen ï¿½eflerin yanï¿½na onlarï¿½n da ï¿½eflerini getiriniz)
+--(ï¿½alï¿½ï¿½an adï¿½, ï¿½ef adï¿½, ï¿½efin ï¿½efinin adï¿½ bilgilerini getirin)
 
 
-
+select a.staff_id, a.first_name, b.first_name + ' ' + b.last_name as manager_name, c.first_name + ' ' + c.last_name as manager_name2
+from sale.staff a
+left join sale.staff b on a.manager_id=b.staff_id
+left join sale.staff c on b.manager_id=c.staff_id
 
 
 
@@ -177,7 +189,7 @@ inner join sale.staff b on a.manager_id=b.staff_id
 --////////////////////////////////////////////--
 ------ VIEWS ------
 
----müþterilerin sipariþ ettiði ürünleri gösteren bir view oluþturun
+---mï¿½ï¿½terilerin sipariï¿½ ettiï¿½i ï¿½rï¿½nleri gï¿½steren bir view oluï¿½turun
 
 create or alter view vw_customer_product
 as
