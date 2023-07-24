@@ -26,10 +26,7 @@ where store_id = (
 		where first_name='Davis' 
 			and last_name='Thomas')
 
-select staff_id
-from sale.staff
-where first_name='Charles' 
-and last_name='Cussona'
+
 -- QUESTION: Write a query that shows the employees for whom Charles Cussona is a first-degree manager.(To which employees are Charles Cussona a first-degree manager?)
 -- (Charles Cussona'n�n birinci derece y�netici oldu�u personeli listeleyin)
 
@@ -41,11 +38,7 @@ where manager_id = (
 		from sale.staff
 		where first_name='Charles' 
 			and last_name='Cussona')
-select product_id, product_name, model_year, list_price
-from product.product
-where list_price>(select list_price
-           from product.product
-           where product_name = 'Pro-Series 49-Class Full HD Outdoor LED TV (Silver)')
+
 -- QUESTION: Write a query that returns the list of products that are more expensive than the product named 'Pro-Series 49-Class Full HD Outdoor LED TV (Silver)'.(Also show model year and list price)
 -- 'Pro-Series 49-Class Full HD Outdoor LED TV (Silver)' isimli �r�nden pahal� olan �r�nleri listeleyin.
 -- Product id, product name, model_year, fiyat, marka ad� ve kategori ad� alanlar�na ihtiya� duyulmaktad�r.
@@ -90,6 +83,11 @@ where b.order_date IN(
 		inner join sale.orders o
 			on c.customer_id=o.customer_id
 		where c.first_name='Laurel' and c.last_name='Goldammer')
+
+
+SELECT * FROM product.product
+SELECT * FROM sale.orders
+
 
 
 
@@ -152,13 +150,26 @@ where NOT EXISTS (
 -- Davi techno ma�azas�ndaki �r�nlerin stok bilgilerini d�nd�ren bir sorgu yaz�n. 
 -- Bu �r�nlerin The BFLO Store ma�azas�nda sto�u bulunmuyor.
 
+SELECT	product_id
+FROM	product.stock A
+		INNER JOIN
+		sale.store B
+		ON	A.store_id = B.store_id
+WHERE	B.store_name = 'Davi Techno Retail'
+AND		a.quantity>0
+AND		NOT EXISTS (
+						SELECT	1
+						FROM	product.stock X
+								INNER JOIN
+								sale.store Y
+								ON	X.store_id = Y.store_id
+						WHERE	Y.store_name = 'The BFLO Store'
+						AND		X.quantity>0
+						AND		A.product_id = X.product_id
+						)
 
 
-SELECT *
-FROM product.product x
-WHERE NOT EXISTS (
-      SELECT 1
-	  FROM 
+
 
 
 
@@ -169,8 +180,9 @@ WHERE NOT EXISTS (
 
 -- QUESTION: Write a query that creates a new column named "total_price" calculating the total prices of the products on each order.
 -- order id'lere g�re toplam list price lar� hesaplay�n.
-
-
+SELECT order_id, SUM(list_price*quantity*(1-discount)) AS total_price
+FROM sale.order_item
+GROUP BY order_id
 
 --/////////////////////////////////////////////////////////////
 
@@ -204,7 +216,9 @@ where a.customer_id=b.customer_id
 	and b.order_date < t1.last_order_date
 	and a.city='austin'
 
-
+WITH cte as
+(
+      SELECT   
 
 -- QUESTION: List all customers their orders are on the same dates with Laurel Goldammer.
 -- Laurel Goldammer isimli m��terinin al��veri� yapt��� tarihte/tarihlerde al��veri� yapan t�m m��terileri listeleyin.
@@ -247,4 +261,21 @@ where trn_1.turnover < trn_2.avg_trn
 -- QUESTION: Write a query that returns the net amount of their first order for customers who placed their first order after 2019-10-01.
 -- (�lk sipari�ini 2019-10-01 tarihinden sonra veren m��terilerin ilk sipari�lerinin net tutar�n� d�nd�r�n�z)
 
+WITH T1 AS (
+	SELECT	customer_id, MIN (order_id) min_orders
+	FROM	sale.orders
+	GROUP BY
+			customer_id
+)
+SELECT	A.customer_id, A.order_id, SUM(quantity* list_price* (1-discount)) net_amount
+FROM	sale.orders A 
+		INNER JOIN
+		sale.order_item B
+		ON	A.order_id = B.order_id
+		INNER JOIN
+		T1 ON A.order_id = T1.min_orders
+WHERE
+		A.order_date > '2019-10-01'
+GROUP BY
+		A.customer_id, A.order_id
 
