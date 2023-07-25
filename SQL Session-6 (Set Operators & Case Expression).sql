@@ -8,7 +8,7 @@
 -- UNION / UNION ALL-------------------------------------------------
 
 -- QUESTION: List the products sold in the cities of Charlotte and Aurora
--- (Charlotte þehrinde satýlan ürünler ile Aurora þehrinde satýlan ürünleri listeleyin)
+-- (Charlotte ï¿½ehrinde satï¿½lan ï¿½rï¿½nler ile Aurora ï¿½ehrinde satï¿½lan ï¿½rï¿½nleri listeleyin)
 
 
 --view / join recap
@@ -68,7 +68,7 @@ inner join product.product p on oi.product_id=p.product_id
 where c.city='Aurora'
 
 --UNION ALL / UNION vs. IN 
---IN logical operatörü kullanýlarak da yapýlabilir.
+--IN logical operatï¿½rï¿½ kullanï¿½larak da yapï¿½labilir.
 
 select distinct p.product_name
 from sale.customer c
@@ -79,7 +79,7 @@ where c.city in ('Aurora', 'charlotte')
 
 --SOME IMPORTANT RULES OF UNION / UNION ALL
 --Even if the contents of to be unified columns are different, the data type must be the same.
---NOT: Sütunlarýn içeriði farklý da olsa veritipinin ayný olmasý yeterlidir.
+--NOT: Sï¿½tunlarï¿½n iï¿½eriï¿½i farklï¿½ da olsa veritipinin aynï¿½ olmasï¿½ yeterlidir.
 
 select *
 from product.brand
@@ -99,7 +99,7 @@ select 5
 
 
 --The number of columns to be unified must be the same in both queries.
---Her iki sorguda da ayný sayýda column olmasý lazým.
+--Her iki sorguda da aynï¿½ sayï¿½da column olmasï¿½ lazï¿½m.
 
 
 select brand_id, brand_name
@@ -195,9 +195,8 @@ where brand_id IN(
 		from product.product
 		where model_year=2019)
 
-
 -- QUESTION: Write a query that contains only products ordered in 2019 (Result not include products ordered in other years)
--- (Sadece 2019 yýlýnda sipariþ verilen diðer yýllarda sipariþ verilmeyen ürünleri getiriniz)
+-- (Sadece 2019 yï¿½lï¿½nda sipariï¿½ verilen diï¿½er yï¿½llarda sipariï¿½ verilmeyen ï¿½rï¿½nleri getiriniz)
 
 select product_id,product_name
 from product.product
@@ -222,7 +221,7 @@ where product_id IN(
 -- Simple Case Expression-------------------------------------------------
 
 -- QUESTION: Create a new column with the meaning of the values in the Order_Status column. 
--- (Order_Status isimli alandaki deðerlerin ne anlama geldiðini içeren yeni bir alan oluþturun)
+-- (Order_Status isimli alandaki deï¿½erlerin ne anlama geldiï¿½ini iï¿½eren yeni bir alan oluï¿½turun)
 
 -- 1 = Pending; 2 = Processing; 3 = Rejected; 4 = Completed
 
@@ -238,24 +237,11 @@ from sale.orders
 
 -- Searched Case Expression-------------------------------------------------
 
--- QUESTION: Create a new column with the meaning of the values in the Order_Status column. 
--- (use searched case ex.)
 
--- 1 = Pending; 2 = Processing; 3 = Rejected; 4 = Completed
-
-
-select order_id, order_status,
-	CASE 
-		WHEN order_status=1 THEN 'Pending'
-		WHEN order_status=2 THEN 'Processing'
-		WHEN order_status=3 THEN 'Rejected'
-		WHEN order_status=4 THEN 'Completed'
-	END orders_status_description
-from sale.orders
 
 
 -- QUESTION: Create a new column that shows which email service provider ("Gmail", "Hotmail", "Yahoo" or "Other" ).
--- (Müþterilerin e-mail adreslerindeki servis saðlayýcýlarýný yeni bir sütun oluþturarak belirtiniz)
+-- (Mï¿½ï¿½terilerin e-mail adreslerindeki servis saï¿½layï¿½cï¿½larï¿½nï¿½ yeni bir sï¿½tun oluï¿½turarak belirtiniz)
 
 select first_name, last_name, email,
 		CASE
@@ -267,9 +253,17 @@ select first_name, last_name, email,
 		END as email_service_provider
 from sale.customer
 
+select first_name, last_name
+FROM product.product
+   CASE
+       WHEN
+
+
+
+
 
 -- QUESTION: Write a query that gives the first and last names of customers who have ordered products from the computer accessories, speakers, and mp4 player categories in the same order.
--- (Ayný sipariþte hem mp4 player, hem Computer Accessories hem de Speakers kategorilerinde ürün sipariþ veren müþterileri bulunuz)
+-- (Aynï¿½ sipariï¿½te hem mp4 player, hem Computer Accessories hem de Speakers kategorilerinde ï¿½rï¿½n sipariï¿½ veren mï¿½ï¿½terileri bulunuz)
 
 select first_name,last_name
 from
@@ -309,5 +303,18 @@ where spe > 0 and ca > 0 and mp4 > 0
 
 
 -- QUESTION: Write a query that returns the count of the orders day by day in a pivot table format that has been shipped two days later.
--- 2 günden geç kargolanan sipariþlerin haftanýn günlerine göre daðýlýmýný hesaplayýnýz.
+-- 2 gï¿½nden geï¿½ kargolanan sipariï¿½lerin haftanï¿½n gï¿½nlerine gï¿½re daï¿½ï¿½lï¿½mï¿½nï¿½ hesaplayï¿½nï¿½z.
 
+SELECT	order_id, DATENAME(WEEKDAY, order_date) weekofday
+FROM	sale.orders
+WHERE	DATEDIFF(DAY, order_date, shipped_date) > 2
+
+ SELECT	 SUM(CASE WHEN DATENAME(WEEKDAY, order_date) = 'Monday' THEN 1 ELSE 0 END) Monday
+		,SUM(CASE WHEN DATENAME(WEEKDAY, order_date) = 'Tuesday' THEN 1 ELSE 0 END) Tuesday
+		,SUM(CASE WHEN DATENAME(WEEKDAY, order_date) = 'Wednesday' THEN 1 ELSE 0 END) Wednesday
+		,SUM(CASE WHEN DATENAME(WEEKDAY, order_date) = 'Thursday' THEN 1 ELSE 0 END) Thursday
+		,SUM(CASE WHEN DATENAME(WEEKDAY, order_date) = 'Friday' THEN 1 ELSE 0 END) Friday
+		,SUM(CASE WHEN DATENAME(WEEKDAY, order_date) = 'Saturday' THEN 1 ELSE 0 END) Saturday
+		,SUM(CASE WHEN DATENAME(WEEKDAY, order_date) = 'Sunday' THEN 1 ELSE 0 END) Sunday
+FROM	sale.orders
+WHERE	DATEDIFF(DAY, order_date, shipped_date) > 2    
